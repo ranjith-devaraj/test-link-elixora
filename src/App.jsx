@@ -16,44 +16,58 @@ function App() {
 
       {/* Main Layout Sections */}
       <main className="relative">
-        
-        {/* Anchors for navigation */}
-        <div id="home" className="absolute top-0 snap-section"></div>
-        <div className="sticky top-0 w-full min-h-screen z-0 snap-section">
+
+        {/* HOME */}
+        <section id="home" className="relative w-full min-h-screen snap-section">
           <Hero />
-        </div>
+        </section>
 
-        {/* Anchors must be block level and take up space, or we can just use absolute positioning if we know they won't move? 
-            Wait, no, an empty block div right before the sticky div perfectly marks its scroll start position! */}
-        <div id="about" className="snap-section"></div>
-        <div className="sticky top-0 w-full min-h-screen z-10 bg-brand-sand flex items-center justify-center overflow-hidden snap-section">
+        {/* ABOUT */}
+        <section
+          id="about"
+          className="relative w-full min-h-screen bg-brand-sand flex items-center justify-center snap-section"
+        >
           <About />
-        </div>
+        </section>
 
-        <div id="whychoose" className="snap-section"></div>
-        <div className="sticky top-0 w-full min-h-screen z-20 bg-brand-cream flex items-center justify-center overflow-hidden snap-section">
+        {/* WHY CHOOSE */}
+        <section
+          id="whychoose"
+          className="relative w-full min-h-screen bg-brand-cream flex items-center justify-center snap-section"
+        >
           <WhyChoose />
-        </div>
+        </section>
 
-        <div id="products" className="relative w-full z-30">
+        {/* PRODUCTS */}
+        <section id="products" className="relative w-full z-30">
           <Products />
-        </div>
+        </section>
 
-        <div id="our-process" className="snap-section"></div>
-        <div className="sticky top-0 w-full min-h-screen z-40 bg-[#EADDC9] flex items-center justify-center overflow-hidden snap-section">
+        {/* OUR PROCESS */}
+        <section
+          id="our-process"
+          className="relative w-full min-h-screen bg-[#EADDC9] flex items-center justify-center snap-section"
+        >
           <OurProcess />
-        </div>
+        </section>
 
-        <div id="reviews" className="snap-section"></div>
-        <div className="sticky top-0 w-full min-h-screen z-50 bg-brand-sand flex items-center justify-center overflow-hidden snap-section">
+        {/* REVIEWS */}
+        <section
+          id="reviews"
+          className="relative w-full min-h-screen bg-brand-sand flex items-center justify-center snap-section"
+        >
           <Reviews />
-        </div>
+        </section>
 
-        <div className="sticky top-0 w-full min-h-screen z-60 bg-[#EFE5D3] flex items-center justify-center overflow-hidden snap-section">
+        {/* BRING HOME */}
+        <section
+          id="bring-home"
+          className="relative w-full min-h-screen bg-[#EFE5D3] flex items-center justify-center"
+        >
           <BringHome />
-        </div>
-      </main>
+        </section>
 
+      </main>
       {/* Company Footer */}
       <div className="snap-end w-full relative z-70 bg-brand-sand">
         <Footer />

@@ -13,62 +13,36 @@ export default function Navbar() {
     { name: 'Reviews', href: '#reviews' },
   ];
 
-  // Smooth scroll handler with collapsing menu layout shift and header offset fixes
   const handleScroll = (e, href) => {
     e.preventDefault();
     setIsOpen(false);
-    
+
     const targetId = href.replace('#', '');
     const element = document.getElementById(targetId);
-    
+
     if (element) {
-      // Calculate absolute position from top of document
-      let offsetTop = 0;
-      let curr = element;
-      while (curr) {
-        offsetTop += curr.offsetTop;
-        curr = curr.offsetParent;
-      }
-      
-      // For sticky full-screen sections, the scroll offset MUST perfectly match the container's top (0 offset)
-      // Otherwise, they won't stick properly or will show the section underneath.
-      const isSticky = 
-        (element.className && typeof element.className === 'string' && element.className.includes('sticky')) || 
-        (element.nextElementSibling && element.nextElementSibling.className && typeof element.nextElementSibling.className === 'string' && element.nextElementSibling.className.includes('sticky'));
-        
-      const headerOffset = isSticky ? 0 : (window.innerWidth >= 1024 ? 100 : 80);
-      const finalPosition = offsetTop - headerOffset;
-      
-      // Delay scrolling by 150ms to let the mobile menu collapse first (avoiding layout shifts)
-      setTimeout(() => {
-        window.scrollTo({
-          top: finalPosition,
-          behavior: 'smooth'
-        });
-      }, 150);
-      
-      // Update hash in address bar
       window.history.pushState(null, null, href);
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 150);
     }
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] bg-brand-cream rounded-b-[2rem] md:rounded-b-[2.5rem] shadow-md px-6 md:px-12 py-3 md:py-4 transition-all duration-300 border-b border-brand-gold/10">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo area - direct transparent logo */}
-        <a 
-          href="#home" 
+    <header className="fixed top-0 left-0 right-0 z-[100] bg-brand-cream rounded-b-[2rem] md:rounded-b-[2.5rem] shadow-md px-4 sm:px-6 md:px-12 py-3 md:py-4 transition-all duration-300 border-b border-brand-gold/10">
+      <div className="max-w-7xl mx-auto flex items-center justify-between min-w-0">
+        <a
+          href="#home"
           onClick={(e) => handleScroll(e, '#home')}
-          className="flex items-center gap-3 transition-transform duration-300 hover:scale-102"
+          className="flex items-center gap-3 min-w-0 transition-transform duration-300 hover:scale-102"
         >
           <img
             src="/assets/elixora logo.png"
             alt="Elixora Logo"
-            className="h-12 md:h-16 w-auto object-contain"
+            className="h-10 sm:h-12 md:h-16 w-auto max-w-[180px] sm:max-w-none object-contain"
           />
         </a>
 
-        {/* Desktop Navigation Links - styled in elegant Serif font as shown in mockup */}
         <nav className="hidden lg:flex items-center gap-10">
           {navLinks.map((link) => (
             <a
@@ -83,7 +57,6 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Desktop Buy Now Button at the right end */}
         <div className="hidden lg:flex items-center">
           <a
             href="#products"
@@ -95,10 +68,13 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Mobile Buttons */}
         <div className="flex items-center gap-3 lg:hidden">
           <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
+            aria-expanded={isOpen}
+            aria-controls="mobile-nav"
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
             className="p-2 text-brand-brown hover:bg-brand-gold/20 rounded-full transition-colors duration-300"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -106,10 +82,10 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-nav"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
