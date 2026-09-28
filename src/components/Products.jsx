@@ -20,7 +20,7 @@ const coconutBg = "/assets/cocnut-oil-backgorund.png";
 const groundnutBg = "/assets/grounfnut-oils-backgorund.png";
 
 // ======================================================
-// TOP BANNER
+// OUR PRODUCTS SECTION
 // ======================================================
 
 const topBannerSection = {
@@ -107,148 +107,20 @@ const products = [
 ];
 
 // ======================================================
-// TOP BANNER
+// OUR PRODUCTS INTRO SECTION
 // ======================================================
 
-function TopBanner({ section }) {
-  return (
-    <section
-      className="
-        relative
-        h-screen
-        w-full
-        overflow-hidden
-        flex
-        items-start
-        pt-24
-        md:pt-32
-        lg:pt-40
-      "
-    >
-      {/* Background */}
-
-      <img
-        src={section.image}
-        alt={section.heading}
-        className={`
-          absolute
-          inset-0
-          w-full
-          h-full
-          object-cover
-          ${section.bgPosition}
-        `}
-      />
-
-      {/* Overlay */}
-
-      <div className="absolute inset-0 bg-black/20" />
-
-      {/* Heading */}
-
-      <div
-        className="
-          relative
-          z-10
-          w-full
-          px-6
-          md:px-16
-          lg:px-24
-        "
-      >
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 30,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 0.8,
-          }}
-          viewport={{
-            once: false,
-          }}
-          className="
-            mx-auto
-            text-center
-            max-w-2xl
-          "
-        >
-          <h2
-            className="
-              text-white
-              font-serif
-              text-3xl
-              md:text-5xl
-              lg:text-6xl
-              font-light
-              tracking-wide
-              drop-shadow-md
-              leading-tight
-            "
-          >
-            {section.heading}
-          </h2>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ======================================================
-// PRODUCT SECTION
-//
-// ONE PRODUCT = ONE SECTION
-//
-// 0%
-// ------------------------------------------------------
-// Blurred full-screen background
-// Product name
-// Bottle
-//
-// 0% → 50%
-// ------------------------------------------------------
-// Background blur disappears
-// Bottle disappears
-// Description appears
-// Buy button appears
-//
-// 50%
-// ------------------------------------------------------
-// TRANSITION FINISHED
-//
-// 50% → 100%
-// ------------------------------------------------------
-// Everything stays in final state
-//
-// THEN NEXT PRODUCT
-// ======================================================
-
-function ProductSection({ product }) {
+function ProductsIntroSection({ section }) {
   const sectionRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-
-    offset: [
-      "start start",
-      "end end",
-    ],
+    offset: ["start start", "end end"],
   });
 
-  // ======================================================
+  // ====================================================
   // BACKGROUND BLUR
-  //
-  // IMPORTANT:
-  // NO SCALE.
-  // NO SIZE CHANGE.
-  // NO POSITION CHANGE.
-  //
-  // Only blur changes.
-  // ======================================================
+  // ====================================================
 
   const blurValue = useTransform(
     scrollYProgress,
@@ -256,11 +128,9 @@ function ProductSection({ product }) {
     [18, 14, 6, 0, 0]
   );
 
-  // ======================================================
+  // ====================================================
   // BACKGROUND OPACITY
-  //
-  // Background remains full screen.
-  // ======================================================
+  // ====================================================
 
   const backgroundOpacity = useTransform(
     scrollYProgress,
@@ -268,12 +138,9 @@ function ProductSection({ product }) {
     [0.75, 0.85, 0.95, 1, 1]
   );
 
-  // ======================================================
+  // ====================================================
   // TITLE
-  //
-  // Always visible.
-  // Slight movement only during transition.
-  // ======================================================
+  // ====================================================
 
   const titleY = useTransform(
     scrollYProgress,
@@ -281,13 +148,147 @@ function ProductSection({ product }) {
     [0, 0, -8, -8]
   );
 
-  // ======================================================
+  return (
+    <section
+      ref={sectionRef}
+      className="relative h-[160vh] w-full"
+    >
+      {/* ==================================================
+          STICKY VISUAL STAGE
+      ================================================== */}
+
+      <div
+        className="
+          sticky
+          top-0
+          h-screen
+          w-full
+          overflow-hidden
+          bg-[#150d09]
+        "
+      >
+        {/* ==================================================
+            FULL SCREEN BACKGROUND
+        ================================================== */}
+
+        <motion.img
+          src={section.image}
+          alt={section.heading}
+          style={{
+            opacity: backgroundOpacity,
+
+            filter: useTransform(
+              blurValue,
+              (value) => `blur(${value}px)`
+            ),
+          }}
+          className={`
+            absolute
+            inset-0
+            w-full
+            h-full
+            object-cover
+            ${section.bgPosition}
+          `}
+        />
+
+        {/* ==================================================
+            OVERLAY
+        ================================================== */}
+
+        <div
+          className="
+            absolute
+            inset-0
+            bg-black/20
+            pointer-events-none
+          "
+        />
+
+        {/* ==================================================
+            TITLE
+        ================================================== */}
+
+        <div
+          className="
+            relative
+            z-10
+            h-full
+            w-full
+            flex
+            items-center
+            justify-center
+          "
+        >
+          <motion.h1
+            style={{
+              y: titleY,
+            }}
+            className="
+              text-white
+              font-serif
+              text-4xl
+              sm:text-5xl
+              md:text-6xl
+              lg:text-7xl
+              font-light
+              tracking-wide
+              drop-shadow-lg
+            "
+          >
+            {section.heading}
+          </motion.h1>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ======================================================
+// PRODUCT SECTION
+// ======================================================
+
+function ProductSection({ product }) {
+  const sectionRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  // ====================================================
+  // BACKGROUND BLUR
+  // ====================================================
+
+  const blurValue = useTransform(
+    scrollYProgress,
+    [0, 0.15, 0.32, 0.5, 1],
+    [18, 14, 6, 0, 0]
+  );
+
+  // ====================================================
+  // BACKGROUND OPACITY
+  // ====================================================
+
+  const backgroundOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.4, 0.5, 1],
+    [0.75, 0.85, 0.95, 1, 1]
+  );
+
+  // ====================================================
+  // PRODUCT TITLE
+  // ====================================================
+
+  const titleY = useTransform(
+    scrollYProgress,
+    [0, 0.35, 0.5, 1],
+    [0, 0, -8, -8]
+  );
+
+  // ====================================================
   // DESCRIPTION
-  //
-  // Hidden at first.
-  // Fully visible at 50%.
-  // Locked afterwards.
-  // ======================================================
+  // ====================================================
 
   const descriptionOpacity = useTransform(
     scrollYProgress,
@@ -301,12 +302,9 @@ function ProductSection({ product }) {
     [35, 15, 0, 0]
   );
 
-  // ======================================================
+  // ====================================================
   // BUY BUTTON
-  //
-  // Appears before 50%.
-  // Locked after 50%.
-  // ======================================================
+  // ====================================================
 
   const buttonOpacity = useTransform(
     scrollYProgress,
@@ -320,15 +318,9 @@ function ProductSection({ product }) {
     [25, 10, 0, 0]
   );
 
-  // ======================================================
-  // BOTTLE
-  //
-  // Visible initially.
-  //
-  // Completely gone at 50%.
-  //
-  // Stays gone.
-  // ======================================================
+  // ====================================================
+  // BOTTLE OPACITY
+  // ====================================================
 
   const bottleOpacity = useTransform(
     scrollYProgress,
@@ -336,24 +328,29 @@ function ProductSection({ product }) {
     [1, 1, 0.5, 0, 0]
   );
 
+  // ====================================================
+  // BOTTLE SCALE
+  // ====================================================
+
   const bottleScale = useTransform(
     scrollYProgress,
     [0, 0.3, 0.5, 1],
     [0.96, 1, 1.05, 1.05]
   );
 
+  // ====================================================
+  // BOTTLE POSITION
+  // ====================================================
+
   const bottleY = useTransform(
     scrollYProgress,
-    [0, 0.3, 0.5, 1],
-    [0, 0, -25, -25]
+    [0, 0.2, 0.35, 0.5, 1],
+    [60, 45, 15, 0, 0]
   );
 
-  // ======================================================
+  // ====================================================
   // DARK OVERLAY
-  //
-  // Gets lighter until 50%.
-  // Then remains unchanged.
-  // ======================================================
+  // ====================================================
 
   const overlayOpacity = useTransform(
     scrollYProgress,
@@ -361,9 +358,9 @@ function ProductSection({ product }) {
     [0.8, 0.55, 0.25, 0.25]
   );
 
-  // ======================================================
+  // ====================================================
   // WHATSAPP
-  // ======================================================
+  // ====================================================
 
   const whatsappNumber = "0000000000";
 
@@ -378,10 +375,6 @@ function ProductSection({ product }) {
       messageText
     )}`;
 
-  // ======================================================
-  // RENDER
-  // ======================================================
-
   return (
     <section
       ref={sectionRef}
@@ -393,9 +386,6 @@ function ProductSection({ product }) {
     >
       {/* ==================================================
           STICKY VISUAL STAGE
-
-          The product remains on screen while the
-          transition happens.
       ================================================== */}
 
       <div
@@ -409,15 +399,7 @@ function ProductSection({ product }) {
         "
       >
         {/* ==================================================
-            FULL-SCREEN BACKGROUND
-
-            IMPORTANT:
-            No scale.
-            No inset.
-            No 106%.
-            No shrinking.
-
-            It always fills the entire viewport.
+            FULL SCREEN BACKGROUND
         ================================================== */}
 
         <motion.img
@@ -442,7 +424,7 @@ function ProductSection({ product }) {
         />
 
         {/* ==================================================
-            OVERLAY
+            DARK OVERLAY
         ================================================== */}
 
         <motion.div
@@ -476,12 +458,21 @@ function ProductSection({ product }) {
             px-6
             md:px-14
             lg:px-20
+
             flex
-            items-center
+            items-start
+            md:items-center
           "
         >
+
           {/* ==================================================
-              LEFT CONTENT
+              PRODUCT CONTENT
+
+              MOBILE:
+              Product name stays near the TOP.
+
+              DESKTOP:
+              Existing centered layout preserved.
           ================================================== */}
 
           <div
@@ -489,15 +480,19 @@ function ProductSection({ product }) {
               w-full
               md:w-[57%]
               lg:w-[54%]
+
               flex
               flex-col
-              justify-center
+              justify-start
+
+              pt-[15vh]  
+              sm:pt-[16vh]
+              md:pt-0
             "
           >
-            {/* ==================================================
-                PRODUCT NAME
 
-                ALWAYS VISIBLE
+            {/* ==================================================
+                PRODUCT TITLE
             ================================================== */}
 
             <motion.div
@@ -531,8 +526,10 @@ function ProductSection({ product }) {
                   sm:text-5xl
                   md:text-5xl
                   lg:text-[58px]
+
                   mt-1
                   md:mt-2
+
                   drop-shadow-md
                   leading-[1.08]
                   font-light
@@ -552,15 +549,17 @@ function ProductSection({ product }) {
                 y: descriptionY,
               }}
               className="
-                mt-6
+                mt-5
                 md:mt-8
                 max-w-xl
                 space-y-3.5
+
                 text-[#F7F4EB]/90
                 text-sm
                 sm:text-base
                 md:text-[15px]
                 lg:text-[16px]
+
                 leading-[1.65]
                 font-sans
                 drop-shadow-sm
@@ -597,19 +596,27 @@ function ProductSection({ product }) {
                   inline-flex
                   items-center
                   justify-center
+
                   px-8
                   py-3
+
                   bg-[#EFE5D3]
                   hover:bg-[#DFD1BD]
+
                   text-[#422C1D]
                   font-serif
+
                   text-sm
                   md:text-base
+
                   font-semibold
                   rounded-full
+
                   shadow-xl
+
                   transition-all
                   duration-300
+
                   hover:shadow-2xl
                   hover:scale-105
                   active:scale-95
@@ -618,19 +625,11 @@ function ProductSection({ product }) {
                 {product.cta}
               </a>
             </motion.div>
+
           </div>
 
           {/* ==================================================
               DESKTOP BOTTLE
-              
-              VISIBLE:
-              0% → 35%
-
-              DISAPPEARS:
-              35% → 50%
-
-              GONE:
-              50% → 100%
           ================================================== */}
 
           <motion.div
@@ -642,12 +641,16 @@ function ProductSection({ product }) {
             className={`
               hidden
               md:flex
+
               absolute
               ${product.bottlePosition}
+
               top-1/2
               -translate-y-1/2
+
               z-10
               pointer-events-none
+
               items-center
               justify-center
             `}
@@ -658,9 +661,12 @@ function ProductSection({ product }) {
               className="
                 md:h-[65vh]
                 lg:h-[72vh]
+
                 max-h-[750px]
+
                 w-auto
                 object-contain
+
                 drop-shadow-[0_30px_50px_rgba(0,0,0,0.75)]
               "
             />
@@ -668,6 +674,12 @@ function ProductSection({ product }) {
 
           {/* ==================================================
               MOBILE BOTTLE
+
+              - Horizontally centered
+              - Large
+              - Positioned below product name
+              - Does NOT move horizontally
+              - Fades away when description appears
           ================================================== */}
 
           <motion.div
@@ -678,33 +690,40 @@ function ProductSection({ product }) {
             }}
             className="
               absolute
-              bottom-[4vh]
+
               left-1/2
               -translate-x-1/2
+
+              bottom-[20vh]
+
               z-10
               pointer-events-none
+
               flex
               md:hidden
+
               items-end
               justify-center
+
+              w-full
             "
           >
             <img
               src={product.productImage}
               alt={`${product.highlight} Bottle`}
               className="
-                h-[45vh]
-                sm:h-[50vh]
+                h-[54vh]
+                sm:h-[58vh]
+
                 w-auto
+                max-w-none
+
                 object-contain
+
                 drop-shadow-[0_25px_45px_rgba(0,0,0,0.75)]
               "
             />
           </motion.div>
-
-          {/* ==================================================
-              SCROLL INDICATOR
-          ================================================== */}
 
         </div>
       </div>
@@ -726,16 +745,19 @@ export default function Products() {
         bg-[#150d09]
       "
     >
+
       {/* ==================================================
-          TOP BANNER
+          1. OUR PRODUCTS
       ================================================== */}
 
-      <TopBanner
+      <ProductsIntroSection
         section={topBannerSection}
       />
 
       {/* ==================================================
-          PRODUCTS
+          2. COCONUT
+          3. SESAME
+          4. GROUNDNUT
       ================================================== */}
 
       {products.map((product) => (
@@ -744,6 +766,7 @@ export default function Products() {
           product={product}
         />
       ))}
+
     </main>
   );
 }
