@@ -39,13 +39,7 @@ export default function Footer() {
               <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
             </svg>
           </a>
-          <a
-            href="#"
-            aria-label="LinkedIn"
-            className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-brown hover:text-brand-dark-brown shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:scale-105 active:scale-95 transition-all duration-300"
-          >
-            <span className="font-serif font-bold text-xl leading-none -mt-0.5">in</span>
-          </a>
+
           <a
             href="#"
             aria-label="YouTube"

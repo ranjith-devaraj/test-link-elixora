@@ -1,7 +1,27 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
-import { Star, Quote, BadgeCheck } from "lucide-react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
+
+import {
+  Star,
+  Quote,
+  BadgeCheck,
+} from "lucide-react";
+
 import "./Reviews.css";
+
+/* =========================================================
+   REVIEWS DATA
+========================================================= */
 
 const REVIEWS = [
   {
@@ -30,9 +50,15 @@ const REVIEWS = [
   },
 ];
 
+/* =========================================================
+   CAROUSEL SETTINGS
+========================================================= */
+
+const GAP = 16;
+
 const DRAG_BUFFER = 30;
+
 const VELOCITY_THRESHOLD = 500;
-const GAP = 20;
 
 const SPRING_OPTIONS = {
   type: "spring",
@@ -40,7 +66,90 @@ const SPRING_OPTIONS = {
   damping: 30,
 };
 
-function ReviewCard({
+/* =========================================================
+   SHARED REVIEW CONTENT
+========================================================= */
+
+function ReviewContent({ review }) {
+  const initials = review.name
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 2);
+
+  return (
+    <>
+      {/* User information */}
+      <div className="review-card-top">
+        <div className="review-avatar">
+          {initials}
+        </div>
+
+        <div className="review-user-info">
+          <div className="review-name-row">
+            <h3>{review.name}</h3>
+
+            <BadgeCheck
+              className="review-verified"
+              size={16}
+            />
+          </div>
+
+          <p>{review.role}</p>
+        </div>
+
+        <Quote
+          className="review-quote-icon"
+          size={30}
+        />
+      </div>
+
+      {/* Rating */}
+      <div className="review-stars">
+        {Array.from({
+          length: review.rating,
+        }).map((_, index) => (
+          <Star
+            key={index}
+            size={16}
+            fill="currentColor"
+            strokeWidth={1.5}
+          />
+        ))}
+      </div>
+
+      {/* Review */}
+      <p className="review-text">
+        "{review.text}"
+      </p>
+
+      {/* Footer */}
+      <div className="review-card-bottom">
+        <span>Verified Customer</span>
+
+        <span>{review.date}</span>
+      </div>
+    </>
+  );
+}
+
+/* =========================================================
+   DESKTOP REVIEW CARD
+========================================================= */
+
+function DesktopReviewCard({ review }) {
+  return (
+    <article className="review-card">
+      <ReviewContent review={review} />
+    </article>
+  );
+}
+
+/* =========================================================
+   MOBILE CAROUSEL REVIEW CARD
+========================================================= */
+
+function CarouselReviewCard({
   review,
   index,
   itemWidth,
@@ -54,106 +163,160 @@ function ReviewCard({
     -(index - 1) * trackItemOffset,
   ];
 
-  const rotateY = useTransform(x, range, [8, 0, -8], {
-    clamp: false,
-  });
-
-  const initials = review.name
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .slice(0, 2);
+  const rotateY = useTransform(
+    x,
+    range,
+    [8, 0, -8],
+    {
+      clamp: false,
+    }
+  );
 
   return (
     <motion.article
-      className="review-carousel-card"
+      className="review-card review-card-carousel"
       style={{
         width: itemWidth,
         rotateY,
       }}
       transition={transition}
     >
-      {/* Top section */}
-      <div className="review-card-top">
-        <div className="review-avatar">{initials}</div>
-
-        <div className="review-user-info">
-          <div className="review-name-row">
-            <h3>{review.name}</h3>
-            <BadgeCheck className="review-verified" size={16} />
-          </div>
-
-          <p>{review.role}</p>
-        </div>
-
-        <Quote className="review-quote-icon" size={30} />
-      </div>
-
-      {/* Stars */}
-      <div className="review-stars">
-        {Array.from({ length: review.rating }).map((_, starIndex) => (
-          <Star
-            key={starIndex}
-            size={16}
-            fill="currentColor"
-            strokeWidth={1.5}
-          />
-        ))}
-      </div>
-
-      {/* Review */}
-      <p className="review-text">"{review.text}"</p>
-
-      {/* Bottom */}
-      <div className="review-card-bottom">
-        <span>Verified Customer</span>
-        <span>{review.date}</span>
-      </div>
+      <ReviewContent review={review} />
     </motion.article>
   );
 }
 
+/* =========================================================
+   MOBILE CAROUSEL
+========================================================= */
+
 function ReviewsCarousel({
   items = REVIEWS,
-  baseWidth = 390,
   autoplay = true,
   autoplayDelay = 3500,
   pauseOnHover = true,
   loop = true,
 }) {
-  const containerPadding = 16;
+  const containerRef = useRef(null);
 
-  const itemWidth = baseWidth - containerPadding * 2;
-  const trackItemOffset = itemWidth + GAP;
+  const [isHovered, setIsHovered] =
+    useState(false);
 
-  const itemsForRender = useMemo(() => {
-    if (!loop) return items;
+  const [isJumping, setIsJumping] =
+    useState(false);
 
-    if (items.length === 0) return [];
+  const [isAnimating, setIsAnimating] =
+    useState(false);
 
-    return [items[items.length - 1], ...items, items[0]];
-  }, [items, loop]);
+  /*
+   * The carousel width is calculated from the
+   * available mobile screen width.
+   */
 
-  const [position, setPosition] = useState(loop ? 1 : 0);
+  const [containerWidth, setContainerWidth] =
+    useState(360);
 
   const x = useMotionValue(0);
 
-  const [isHovered, setIsHovered] = useState(false);
-  const [isJumping, setIsJumping] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const containerRef = useRef(null);
-
-  /* ---------------------------
-     Hover handling
-  ---------------------------- */
+  /* -----------------------------------------
+     Responsive width
+  ----------------------------------------- */
 
   useEffect(() => {
-    if (!pauseOnHover || !containerRef.current) {
+    const updateWidth = () => {
+      const width =
+        window.innerWidth;
+
+      /*
+       * Keep some side spacing on mobile.
+       */
+
+      const calculatedWidth =
+        Math.min(width - 32, 390);
+
+      setContainerWidth(
+        Math.max(calculatedWidth, 280)
+      );
+    };
+
+    updateWidth();
+
+    window.addEventListener(
+      "resize",
+      updateWidth
+    );
+
+    return () => {
+      window.removeEventListener(
+        "resize",
+        updateWidth
+      );
+    };
+  }, []);
+
+  const itemWidth =
+    containerWidth - 32;
+
+  const trackItemOffset =
+    itemWidth + GAP;
+
+  /* -----------------------------------------
+     Infinite loop items
+  ----------------------------------------- */
+
+  const itemsForRender = useMemo(() => {
+    if (!loop) {
+      return items;
+    }
+
+    if (items.length === 0) {
+      return [];
+    }
+
+    return [
+      items[items.length - 1],
+      ...items,
+      items[0],
+    ];
+  }, [items, loop]);
+
+  const [position, setPosition] =
+    useState(loop ? 1 : 0);
+
+  /* -----------------------------------------
+     Reset position when width changes
+  ----------------------------------------- */
+
+  useEffect(() => {
+    const startingPosition =
+      loop ? 1 : 0;
+
+    setPosition(startingPosition);
+
+    x.set(
+      -startingPosition *
+        trackItemOffset
+    );
+  }, [
+    loop,
+    trackItemOffset,
+    x,
+  ]);
+
+  /* -----------------------------------------
+     Hover handling
+  ----------------------------------------- */
+
+  useEffect(() => {
+    if (
+      !pauseOnHover ||
+      !containerRef.current
+    ) {
       return;
     }
 
-    const container = containerRef.current;
+    const container =
+      containerRef.current;
 
     const handleMouseEnter = () => {
       setIsHovered(true);
@@ -163,36 +326,58 @@ function ReviewsCarousel({
       setIsHovered(false);
     };
 
-    container.addEventListener("mouseenter", handleMouseEnter);
-    container.addEventListener("mouseleave", handleMouseLeave);
+    container.addEventListener(
+      "mouseenter",
+      handleMouseEnter
+    );
+
+    container.addEventListener(
+      "mouseleave",
+      handleMouseLeave
+    );
 
     return () => {
-      container.removeEventListener("mouseenter", handleMouseEnter);
-      container.removeEventListener("mouseleave", handleMouseLeave);
+      container.removeEventListener(
+        "mouseenter",
+        handleMouseEnter
+      );
+
+      container.removeEventListener(
+        "mouseleave",
+        handleMouseLeave
+      );
     };
   }, [pauseOnHover]);
 
-  /* ---------------------------
+  /* -----------------------------------------
      Autoplay
-  ---------------------------- */
+  ----------------------------------------- */
 
   useEffect(() => {
-    if (!autoplay) return;
-
-    if (itemsForRender.length <= 1) {
+    if (!autoplay) {
       return;
     }
 
-    if (pauseOnHover && isHovered) {
+    if (
+      itemsForRender.length <= 1
+    ) {
+      return;
+    }
+
+    if (
+      pauseOnHover &&
+      isHovered
+    ) {
       return;
     }
 
     const timer = setInterval(() => {
-      setPosition((prev) => {
-        const next = prev + 1;
-
-        return Math.min(next, itemsForRender.length - 1);
-      });
+      setPosition((previous) =>
+        Math.min(
+          previous + 1,
+          itemsForRender.length - 1
+        )
+      );
     }, autoplayDelay);
 
     return () => {
@@ -206,143 +391,149 @@ function ReviewsCarousel({
     itemsForRender.length,
   ]);
 
-  /* ---------------------------
-     Reset position
-  ---------------------------- */
+  /* -----------------------------------------
+     Animation state
+  ----------------------------------------- */
 
-  useEffect(() => {
-    const startingPosition = loop ? 1 : 0;
-
-    setPosition(startingPosition);
-
-    x.set(-startingPosition * trackItemOffset);
-  }, [items.length, loop, trackItemOffset, x]);
-
-  /* ---------------------------
-     Position safety
-  ---------------------------- */
-
-  useEffect(() => {
-    if (!loop && position > itemsForRender.length - 1) {
-      setPosition(Math.max(0, itemsForRender.length - 1));
-    }
-  }, [itemsForRender.length, loop, position]);
-
-  /* ---------------------------
-     Transition
-  ---------------------------- */
-
-  const effectiveTransition = isJumping
-    ? { duration: 0 }
-    : SPRING_OPTIONS;
-
-  /* ---------------------------
-     Animation complete
-  ---------------------------- */
+  const effectiveTransition =
+    isJumping
+      ? { duration: 0 }
+      : SPRING_OPTIONS;
 
   const handleAnimationStart = () => {
     setIsAnimating(true);
   };
 
-  const handleAnimationComplete = () => {
-    if (!loop || itemsForRender.length <= 1) {
+  /* -----------------------------------------
+     Infinite loop handling
+  ----------------------------------------- */
+
+  const handleAnimationComplete =
+    () => {
+      if (
+        !loop ||
+        itemsForRender.length <= 1
+      ) {
+        setIsAnimating(false);
+        return;
+      }
+
+      const lastCloneIndex =
+        itemsForRender.length - 1;
+
+      /*
+       * Last clone reached.
+       * Jump silently to first real item.
+       */
+
+      if (
+        position === lastCloneIndex
+      ) {
+        setIsJumping(true);
+
+        const target = 1;
+
+        setPosition(target);
+
+        x.set(
+          -target *
+            trackItemOffset
+        );
+
+        requestAnimationFrame(() => {
+          setIsJumping(false);
+          setIsAnimating(false);
+        });
+
+        return;
+      }
+
+      /*
+       * First clone reached.
+       * Jump silently to last real item.
+       */
+
+      if (position === 0) {
+        setIsJumping(true);
+
+        const target = items.length;
+
+        setPosition(target);
+
+        x.set(
+          -target *
+            trackItemOffset
+        );
+
+        requestAnimationFrame(() => {
+          setIsJumping(false);
+          setIsAnimating(false);
+        });
+
+        return;
+      }
+
       setIsAnimating(false);
-      return;
-    }
+    };
 
-    const lastCloneIndex = itemsForRender.length - 1;
+  /* -----------------------------------------
+     Drag / Swipe
+  ----------------------------------------- */
 
-    /*
-      Last clone reached
-      Jump back to first real item
-    */
-
-    if (position === lastCloneIndex) {
-      setIsJumping(true);
-
-      const target = 1;
-
-      setPosition(target);
-
-      x.set(-target * trackItemOffset);
-
-      requestAnimationFrame(() => {
-        setIsJumping(false);
-        setIsAnimating(false);
-      });
-
-      return;
-    }
-
-    /*
-      First clone reached
-      Jump to last real item
-    */
-
-    if (position === 0) {
-      setIsJumping(true);
-
-      const target = items.length;
-
-      setPosition(target);
-
-      x.set(-target * trackItemOffset);
-
-      requestAnimationFrame(() => {
-        setIsJumping(false);
-        setIsAnimating(false);
-      });
-
-      return;
-    }
-
-    setIsAnimating(false);
-  };
-
-  /* ---------------------------
-     Drag
-  ---------------------------- */
-
-  const handleDragEnd = (_, info) => {
-    const { offset, velocity } = info;
+  const handleDragEnd = (
+    _,
+    info
+  ) => {
+    const {
+      offset,
+      velocity,
+    } = info;
 
     const direction =
-      offset.x < -DRAG_BUFFER || velocity.x < -VELOCITY_THRESHOLD
+      offset.x < -DRAG_BUFFER ||
+      velocity.x <
+        -VELOCITY_THRESHOLD
         ? 1
-        : offset.x > DRAG_BUFFER || velocity.x > VELOCITY_THRESHOLD
+        : offset.x > DRAG_BUFFER ||
+          velocity.x >
+            VELOCITY_THRESHOLD
         ? -1
         : 0;
 
-    if (direction === 0) return;
+    if (direction === 0) {
+      return;
+    }
 
-    setPosition((prev) => {
-      const next = prev + direction;
+    setPosition((previous) => {
+      const next =
+        previous + direction;
 
-      const max = itemsForRender.length - 1;
+      const max =
+        itemsForRender.length - 1;
 
-      return Math.max(0, Math.min(next, max));
+      return Math.max(
+        0,
+        Math.min(next, max)
+      );
     });
   };
 
-  const dragProps = loop
-    ? {}
-    : {
-        dragConstraints: {
-          left: -trackItemOffset * Math.max(itemsForRender.length - 1, 0),
-          right: 0,
-        },
-      };
-
-  /* ---------------------------
-     Active index
-  ---------------------------- */
+  /* -----------------------------------------
+     Active indicator
+  ----------------------------------------- */
 
   const activeIndex =
     items.length === 0
       ? 0
       : loop
-      ? (position - 1 + items.length) % items.length
-      : Math.min(position, items.length - 1);
+      ? (position -
+          1 +
+          items.length) %
+        items.length
+      : Math.min(
+          position,
+          items.length - 1
+        );
 
   if (!items.length) {
     return null;
@@ -351,69 +542,104 @@ function ReviewsCarousel({
   return (
     <div
       ref={containerRef}
-      className="reviews-carousel-container"
-      style={{
-        width: `${baseWidth}px`,
-      }}
+      className="mobile-reviews-carousel"
     >
       <motion.div
-        className="reviews-carousel-track"
-        drag={isAnimating ? false : "x"}
-        {...dragProps}
+        className="mobile-reviews-track"
+        drag={
+          isAnimating
+            ? false
+            : "x"
+        }
+        dragConstraints={
+          loop
+            ? undefined
+            : {
+                left:
+                  -trackItemOffset *
+                  Math.max(
+                    itemsForRender.length -
+                      1,
+                    0
+                  ),
+                right: 0,
+              }
+        }
         style={{
           width: itemWidth,
           gap: `${GAP}px`,
           perspective: 1000,
           perspectiveOrigin: `${
-            position * trackItemOffset + itemWidth / 2
+            position *
+              trackItemOffset +
+            itemWidth / 2
           }px 50%`,
           x,
         }}
         animate={{
-          x: -(position * trackItemOffset),
+          x: -(
+            position *
+            trackItemOffset
+          ),
         }}
-        transition={effectiveTransition}
+        transition={
+          effectiveTransition
+        }
         onDragEnd={handleDragEnd}
-        onAnimationStart={handleAnimationStart}
-        onAnimationComplete={handleAnimationComplete}
+        onAnimationStart={
+          handleAnimationStart
+        }
+        onAnimationComplete={
+          handleAnimationComplete
+        }
       >
-        {itemsForRender.map((review, index) => (
-          <ReviewCard
-            key={`${review.id}-${index}`}
-            review={review}
-            index={index}
-            itemWidth={itemWidth}
-            trackItemOffset={trackItemOffset}
-            x={x}
-            transition={effectiveTransition}
-          />
-        ))}
+        {itemsForRender.map(
+          (review, index) => (
+            <CarouselReviewCard
+              key={`${review.id}-${index}`}
+              review={review}
+              index={index}
+              itemWidth={itemWidth}
+              trackItemOffset={
+                trackItemOffset
+              }
+              x={x}
+              transition={
+                effectiveTransition
+              }
+            />
+          )
+        )}
       </motion.div>
 
       {/* Indicators */}
       <div className="reviews-indicators">
-        {items.map((_, index) => (
-          <motion.button
-            key={index}
-            type="button"
-            aria-label={`Go to review ${index + 1}`}
-            aria-current={activeIndex === index}
-            className={
-              activeIndex === index
-                ? "review-indicator active"
-                : "review-indicator"
-            }
-            animate={{
-              scale: activeIndex === index ? 1.2 : 1,
-            }}
-            onClick={() => {
-              setPosition(loop ? index + 1 : index);
-            }}
-            transition={{
-              duration: 0.15,
-            }}
-          />
-        ))}
+        {items.map(
+          (_, index) => (
+            <button
+              key={index}
+              type="button"
+              aria-label={`Go to review ${
+                index + 1
+              }`}
+              aria-current={
+                activeIndex === index
+              }
+              className={`review-indicator ${
+                activeIndex === index
+                  ? "active"
+                  : ""
+              }`}
+              onClick={() => {
+                setPosition(
+                  loop
+                    ? index + 1
+                    : index
+                );
+              }}
+            />
+          )
+        )}
       </div>
     </div>
   );
@@ -427,16 +653,21 @@ export default function Reviews() {
   return (
     <section
       id="reviews"
-      className="relative w-full overflow-hidden bg-brand-cream/20 px-0 py-0"
+      className="reviews-section"
     >
-      {/* Background decoration */}
-      <div className="reviews-bg-decoration reviews-bg-decoration-one" />
-      <div className="reviews-bg-decoration reviews-bg-decoration-two" />
+      {/* Decorative background */}
+      <div className="reviews-decoration reviews-decoration-one" />
 
-      <div className="relative z-10 w-full">
+      <div className="reviews-decoration reviews-decoration-two" />
+
+      <div className="reviews-content">
+
         {/* Heading */}
         <div className="reviews-heading">
-          <p className="reviews-eyebrow">CUSTOMER LOVE</p>
+
+          <p className="reviews-eyebrow">
+            CUSTOMER LOVE
+          </p>
 
           <h2>
             What Our Customers
@@ -444,22 +675,51 @@ export default function Reviews() {
           </h2>
 
           <p className="reviews-subtitle">
-            Real experiences from people who choose pure, traditionally
-            pressed oils for their everyday cooking.
+            Real experiences from people
+            who choose pure,
+            traditionally pressed oils
+            for their everyday cooking.
           </p>
+
         </div>
 
-        {/* Carousel */}
-        <div className="reviews-carousel-wrapper">
+        {/* =====================================
+            DESKTOP
+        ====================================== */}
+
+        <div className="reviews-desktop">
+
+          <div className="reviews-grid">
+
+            {REVIEWS.map(
+              (review) => (
+                <DesktopReviewCard
+                  key={review.id}
+                  review={review}
+                />
+              )
+            )}
+
+          </div>
+
+        </div>
+
+        {/* =====================================
+            MOBILE
+        ====================================== */}
+
+        <div className="reviews-mobile">
+
           <ReviewsCarousel
             items={REVIEWS}
-            baseWidth={390}
             autoplay={true}
             autoplayDelay={3500}
             pauseOnHover={true}
             loop={true}
           />
+
         </div>
+
       </div>
     </section>
   );
