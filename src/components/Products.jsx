@@ -9,15 +9,15 @@ import {
 // ASSETS
 // ======================================================
 
-const img1 = "/assets/our products.png";
+const img1 = "/assets/our products.webp";
 
-const coconutOil = "/assets/cocunt-oil.png";
-const sesameOil = "/assets/sesame-oil.png";
-const groundnutOil = "/assets/groundnut-oil.png";
+const coconutOil = "/assets/cocunt-oil.webp";
+const sesameOil = "/assets/sesame-oil.webp";
+const groundnutOil = "/assets/groundnut-oil.webp";
 
-const sesameBg = "/assets/sesame-oils-backgorund.png";
-const coconutBg = "/assets/cocnut-oil-backgorund.png";
-const groundnutBg = "/assets/grounfnut-oils-backgorund.png";
+const sesameBg = "/assets/sesame-oils-backgorund.webp";
+const coconutBg = "/assets/cocnut-oil-backgorund.webp";
+const groundnutBg = "/assets/grounfnut-oils-backgorund.webp";
 
 // ======================================================
 // OUR PRODUCTS SECTION

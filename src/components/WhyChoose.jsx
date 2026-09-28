@@ -7,32 +7,32 @@ export default function WhyChoose() {
     {
       title: "Naturally Cold Pressed",
       description: "Extracted using traditional wooden ghani methods at room temperature to retain all natural nutrients, antioxidants, and pure, authentic flavour.",
-      image: "/assets/why choose elixora-01.png"
+      image: "/assets/why choose elixora-01.webp"
     },
     {
       title: "No Chemicals or Additives",
       description: "100% pure and unrefined. We never use preservatives, artificial colours, or chemical solvents in any step of our extraction process.",
-      image: "/assets/why choose elixor-02.png"
+      image: "/assets/why choose elixor-02.webp"
     },
     {
       title: "Rich in Natural Nutrition",
       description: "Packed with essential fatty acids, natural vitamins, and vital antioxidants that promote heart health, immunity, and overall well-being.",
-      image: "/assets/why choose elixora-03.png"
+      image: "/assets/why choose elixora-03.webp"
     },
     {
       title: "Rooted in Tradition",
       description: "Honouring ancient Indian Ayurvedic practices by using time-tested, heat-free methods that preserve the true essence and goodness of the oil.",
-      image: "/assets/why choose elixora-4.png"
+      image: "/assets/why choose elixora-4.webp"
     },
     {
       title: "Premium Ingredients",
       description: "Sourced directly from trusted local farmers, we carefully select only the highest quality, sun-dried seeds and mature nuts for our oils.",
-      image: "/assets/why choose elixora-5.png"
+      image: "/assets/why choose elixora-5.webp"
     },
     {
       title: "Trusted Everyday",
       description: "A clean, healthy choice for your daily cooking needs, trusted by families to bring wholesome nutrition and rich taste to every single meal.",
-      image: "/assets/why choose elixora-6.png"
+      image: "/assets/why choose elixora-6.webp"
     }
   ];
 

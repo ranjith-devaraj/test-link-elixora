@@ -148,7 +148,7 @@ export default function About() {
             className="w-full h-full"
           >
             <img
-              src="/assets/about page-image.png"
+              src="/assets/about page-image.webp"
               alt="Elixora Family Dinner"
               className="w-full h-full object-cover object-left rounded-tl-[120px] sm:rounded-tl-[240px] md:rounded-tl-[320px] lg:rounded-tl-[480px] rounded-tr-none rounded-br-none rounded-bl-none group-hover/img:scale-[1.025] transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
             />

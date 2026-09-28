@@ -14,7 +14,7 @@ export default function BringHome() {
         ========================================================================
       */}
       <img
-        src="/assets/elixora last page-image.png"
+        src="/assets/elixora last page-image.webp"
         alt="Trusted by families"
         className="absolute inset-0 w-full h-full object-cover object-[20%_center] md:object-[20%_center]"
       />

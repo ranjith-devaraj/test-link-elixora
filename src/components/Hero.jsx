@@ -17,7 +17,7 @@ export default function Hero() {
       <div
         className="absolute inset-0 bg-cover bg-[22%_center] md:bg-left-bottom z-0"
         style={{
-          backgroundImage: "url('/assets/hero-page.png')",
+          backgroundImage: "url('/assets/hero-page.webp')",
         }}
       >
         {/* Dark overlay on mobile to make white text readable directly on the background */}
