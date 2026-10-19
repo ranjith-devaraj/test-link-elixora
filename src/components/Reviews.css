@@ -35,7 +35,7 @@
 
     margin: 0 auto;
 
-    padding: 55px 20px 28px;
+    padding: 76px 20px 28px;
 
     text-align: center;
 }
@@ -477,7 +477,7 @@
 @media (max-width: 767px) {
     .reviews-heading {
         padding:
-            38px 18px 15px;
+            76px 18px 15px;
     }
 
     .reviews-heading h2 {

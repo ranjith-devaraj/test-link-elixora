@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function About() {
   return (
-    <section className="relative w-full bg-brand-sand text-[#4E3629] overflow-hidden">
+    <div className="relative w-full bg-brand-sand text-[#4E3629] overflow-hidden">
      
 
       {/* Premium Background Glows */}
@@ -60,7 +60,7 @@ export default function About() {
       <div className="w-full grid grid-cols-1 lg:grid-cols-12 min-h-[500px] md:min-h-[600px] lg:min-h-[700px] items-center relative z-10">
         
         {/* Left Column: Text & Content with dynamic padding-left to align with standard content margins */}
-        <div className="col-span-1 lg:col-span-5 pl-6 md:pl-16 lg:pl-[max(4rem,calc((100vw-1280px)/2+4rem))] pr-6 md:pr-16 lg:pr-12 py-8 md:py-24 flex flex-col justify-center items-start text-left relative z-10">
+        <div className="col-span-1 lg:col-span-5 pl-6 md:pl-16 lg:pl-[max(4rem,calc((100vw-1280px)/2+4rem))] pr-6 md:pr-16 lg:pr-12 pt-24 pb-10 sm:pt-28 md:py-20 lg:py-24 flex flex-col justify-center items-start text-left relative z-10">
           <div className="max-w-xl">
             {/* Staggered Heading Reveal */}
             <h2 className="font-serif text-[#4E3629] text-4xl sm:text-5xl md:text-6xl lg:text-[76px] leading-[1.05] font-light tracking-wide">
@@ -156,6 +156,6 @@ export default function About() {
         </div>
 
       </div>
-    </section>
+    </div>
   );
 }

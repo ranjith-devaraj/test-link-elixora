@@ -37,7 +37,7 @@ export default function WhyChoose() {
   ];
 
   return (
-    <section id="why-choose" className="relative py-10 md:py-12 bg-brand-cream px-6 md:px-12 lg:px-16 text-left w-full">
+    <div className="relative pt-24 pb-12 sm:pt-28 md:py-16 lg:py-20 bg-brand-cream px-6 md:px-12 lg:px-16 text-left w-full">
 
       <div className="max-w-[90rem] mx-auto">
         {/* Section Title */}
@@ -88,7 +88,7 @@ export default function WhyChoose() {
                 - Description text size is `text-[11px]` on mobile.
                 ========================================================================
               */}
-              <div className="flex flex-col flex-grow px-4 py-4 md:px-6 md:py-6 text-left">
+              <div className="flex flex-col flex-grow px-6 py-4 md:px-8 md:py-6 text-left">
                 <h3 className="font-serif text-[14px] sm:text-base md:text-xl lg:text-xl text-brand-cream mb-1.5 md:mb-3 font-normal leading-tight md:leading-snug">
                   {card.title}
                 </h3>
@@ -100,6 +100,6 @@ export default function WhyChoose() {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

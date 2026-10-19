@@ -8,70 +8,78 @@ import Products from './components/Products';
 import Reviews from './components/Reviews';
 import BringHome from './components/BringHome';
 import Footer from './components/Footer';
+
 function App() {
   return (
     <div className="min-h-screen bg-brand-sand font-sans text-brand-brown antialiased selection:bg-brand-gold selection:text-brand-brown">
       {/* Premium Floating Header */}
       <Navbar />
 
-      {/* Main Layout Sections */}
+      {/* Main Layout Sections - Stacking Curtain Reveal */}
       <main className="relative">
 
-        {/* HOME */}
-        <section id="home" className="relative w-full min-h-screen snap-section">
+        {/* 1. HOME (HERO) - Pinned at top as subsequent sections glide up */}
+        <section
+          id="home"
+          className="sticky top-0 h-screen w-full z-10 overflow-hidden"
+        >
           <Hero />
         </section>
 
-        {/* ABOUT */}
+        {/* 2. ABOUT - Glides smoothly UP over Hero */}
         <section
           id="about"
-          className="relative w-full min-h-screen bg-brand-sand flex items-center justify-center snap-section"
+          className="stacking-section z-20 bg-brand-sand flex items-center justify-center shadow-[0_-20px_50px_rgba(40,20,10,0.14)]"
         >
           <About />
         </section>
 
-        {/* WHY CHOOSE */}
+        {/* 3. WHY CHOOSE - Glides smoothly UP over About */}
         <section
           id="whychoose"
-          className="relative w-full min-h-screen bg-brand-cream flex items-center justify-center snap-section"
+          className="stacking-section z-30 bg-brand-cream flex items-center justify-center shadow-[0_-20px_50px_rgba(40,20,10,0.16)]"
         >
           <WhyChoose />
         </section>
 
-        {/* PRODUCTS */}
-        <section id="products" className="relative w-full z-30">
+        {/* 4. PRODUCTS - Natural flow with its own internal sticky animation stages */}
+        <section
+          id="products"
+          className="relative w-full z-40 bg-[#150d09] shadow-[0_-25px_60px_rgba(0,0,0,0.35)]"
+        >
           <Products />
         </section>
 
-        {/* OUR PROCESS */}
+        {/* 5. OUR PROCESS - Glides smoothly UP over Products */}
         <section
           id="our-process"
-          className="relative w-full min-h-screen bg-[#EADDC9] flex items-center justify-center snap-section"
+          className="stacking-section z-50 bg-[#EADDC9] flex items-center justify-center shadow-[0_-25px_60px_-15px_rgba(40,20,10,0.22)]"
         >
           <OurProcess />
         </section>
 
-        {/* REVIEWS */}
+        {/* 6. REVIEWS - Glides smoothly UP over Our Process */}
         <section
           id="reviews"
-          className="relative w-full min-h-screen bg-brand-sand flex items-center justify-center snap-section"
+          className="stacking-section z-60 bg-brand-sand flex items-center justify-center shadow-[0_-20px_50px_rgba(40,20,10,0.16)]"
         >
           <Reviews />
         </section>
 
-        {/* BRING HOME */}
+        {/* 7. BRING HOME - Glides smoothly UP over Reviews */}
         <section
           id="bring-home"
-          className="relative w-full min-h-screen bg-[#EFE5D3] flex items-center justify-center"
+          className="stacking-section z-70 bg-[#EFE5D3] flex items-center justify-center shadow-[0_-30px_70px_rgba(0,0,0,0.3)]"
         >
           <BringHome />
         </section>
 
       </main>
-      {/* Company Footer */}
-      <div className="snap-end w-full relative z-70 bg-brand-sand">
+
+      {/* Company Footer - Docks smoothly over Bring Home */}
+      <footer className="relative w-full z-80 bg-brand-sand shadow-[0_-20px_50px_rgba(0,0,0,0.15)]">
         <Footer />
-      </div>
+      </footer>
     </div>
   );
 }

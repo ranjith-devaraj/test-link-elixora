@@ -1,60 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import {
+  scrollToNextSection,
+  scrollToPrevSection,
+} from '../utils/scrollUtils';
 
-// ── Scroll DOWN to next snap section ──────────────────────────────────────────
-export const scrollToNextSection = (e) => {
-  if (e) e.preventDefault();
-
-  const currentY = window.scrollY;
-  const sections = Array.from(document.querySelectorAll('.snap-section, .snap-end'));
-
-  for (const section of sections) {
-    const rect = section.getBoundingClientRect();
-    const sectionTop = currentY + rect.top;
-
-    // Find the first section that starts meaningfully below current position
-    if (sectionTop > currentY + 25) {
-      window.scrollTo({ top: sectionTop, behavior: 'smooth' });
-      return;
-    }
-  }
-
-  // Fallback
-  window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-};
-
-// ── Scroll UP to previous snap section ───────────────────────────────────────
-export const scrollToPrevSection = (e) => {
-  if (e) e.preventDefault();
-
-  const currentY = window.scrollY;
-  const sections = Array.from(document.querySelectorAll('.snap-section, .snap-end'));
-
-  // Iterate in reverse to find the last section strictly above current position
-  let target = null;
-  for (const section of sections) {
-    const rect = section.getBoundingClientRect();
-    const sectionTop = currentY + rect.top;
-
-    if (sectionTop < currentY - 25) {
-      target = sectionTop;
-    }
-  }
-
-  if (target !== null) {
-    window.scrollTo({ top: target, behavior: 'smooth' });
-  } else {
-    // Fallback: scroll up by 1 viewport height
-    window.scrollBy({ top: -window.innerHeight, behavior: 'smooth' });
-  }
-};
 
 // ── Shared Arrow Component ────────────────────────────────────────────────────
 export default function ScrollArrow({
   direction = 'down',   // 'down' | 'up'
   variant = 'light',    // 'light' | 'dark'
   className = '',
+  targetId = 'about',
+  href,
   onClick,
+  'aria-label': customAriaLabel,
 }) {
   const isUp = direction === 'up';
 
@@ -69,30 +29,78 @@ export default function ScrollArrow({
 
   // Positioning: down = bottom-6/8, up = top-6/8
   const positionClass = isUp
-    ? `absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-30 pointer-events-auto ${className}`
-    : `absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-30 pointer-events-auto ${className}`;
+    ? `absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto ${className}`
+    : `absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto ${className}`;
+
+  const resolvedTarget = targetId || (href ? href.replace('#', '') : (isUp ? 'home' : 'about'));
+  const resolvedHref = href || `#${resolvedTarget}`;
+  const defaultLabel = isUp
+    ? 'Scroll to previous section'
+    : `Scroll to ${resolvedTarget.charAt(0).toUpperCase() + resolvedTarget.slice(1)} section`;
+  const ariaLabel = customAriaLabel || defaultLabel;
 
   const handleClick = (e) => {
+    if (e) {
+      if (e.preventDefault) e.preventDefault();
+      if (e.stopPropagation) e.stopPropagation();
+    }
+
     if (onClick) {
       onClick(e);
-    } else if (isUp) {
-      scrollToPrevSection(e);
-    } else {
-      scrollToNextSection(e);
+      return;
     }
+
+    const currentY = typeof window !== 'undefined' ? window.scrollY : 0;
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    const scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
+
+    const aboutElement = document.getElementById('about');
+    const homeElement = document.getElementById('home');
+    const heroHeight = homeElement
+      ? homeElement.getBoundingClientRect().height
+      : (typeof window !== 'undefined' ? window.innerHeight : 800);
+
+    // If down arrow is clicked while in or near the Hero section, navigate directly to About
+    if (!isUp) {
+      if (currentY < heroHeight * 0.75) {
+        window.scrollTo({
+          top: heroHeight,
+          behavior: scrollBehavior,
+        });
+
+        if (aboutElement) {
+          try {
+            aboutElement.scrollIntoView({
+              behavior: scrollBehavior,
+              block: 'start',
+            });
+          } catch {}
+        }
+
+        if (typeof window !== 'undefined' && window.history) {
+          window.history.replaceState(null, '', '#about');
+        }
+        return;
+      }
+
+      // If already past Hero, advance to next section
+      scrollToNextSection(e);
+      return;
+    }
+
+    // Up arrow
+    scrollToPrevSection(e);
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.6, duration: 0.8 }}
-      className={positionClass}
-    >
-      <button
+    <div className={positionClass}>
+      <a
+        href={resolvedHref}
         onClick={handleClick}
-        className={`flex flex-col items-center justify-center ${colorClasses} transition-all duration-300 cursor-pointer group p-2 rounded-full focus:outline-none`}
-        aria-label={isUp ? 'Scroll to previous section' : 'Scroll to next section'}
+        className={`flex flex-col items-center justify-center ${colorClasses} transition-all duration-300 cursor-pointer group p-3 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2`}
+        aria-label={ariaLabel}
       >
         <motion.div
           animate={bounceAnim}
@@ -105,18 +113,15 @@ export default function ScrollArrow({
             viewBox="0 0 24 24"
           >
             {isUp
-              /* Up chevron */
               ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-              /* Down chevron */
               : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             }
           </svg>
         </motion.div>
-      </button>
-    </motion.div>
+      </a>
+    </div>
   );
 }
 
 // Backward-compat named export so existing imports of ScrollDownArrow still work
 export const ScrollDownArrow = (props) => <ScrollArrow direction="down" {...props} />;
-

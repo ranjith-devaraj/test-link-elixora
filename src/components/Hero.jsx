@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { ScrollDownArrow } from './ScrollDownArrow';
 
 export default function Hero() {
   return (
-    <section
-      className="sticky top-0 h-screen pt-20 md:pt-0 flex items-center justify-end overflow-hidden bg-brand-sand z-0"
+    <div
+      className="relative w-full h-full pt-20 md:pt-0 flex items-center justify-end overflow-hidden bg-brand-sand"
     >
       {/* 
         ========================================================================
@@ -75,6 +76,14 @@ export default function Hero() {
         />
       </div>
 
-    </section>
+      {/* Down arrow to smoothly scroll to About section */}
+      <ScrollDownArrow
+        targetId="about"
+        href="#about"
+        variant="light"
+        aria-label="Scroll to About section"
+      />
+
+    </div>
   );
 }

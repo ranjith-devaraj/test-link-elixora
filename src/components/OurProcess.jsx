@@ -32,7 +32,7 @@ export default function OurProcess() {
   ];
 
   return (
-    <section id="our-process" className="relative py-20 md:py-28 bg-[#EADDC9] px-6 md:px-12 lg:px-24 text-left overflow-hidden">
+    <div className="relative py-20 md:py-28 bg-[#EADDC9] px-6 md:px-12 lg:px-24 text-left overflow-hidden w-full">
       <div className="max-w-[90rem] mx-auto">
         {/* Section Title */}
         <motion.div
@@ -84,6 +84,6 @@ export default function OurProcess() {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

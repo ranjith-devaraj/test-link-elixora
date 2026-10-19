@@ -651,8 +651,7 @@ function ReviewsCarousel({
 
 export default function Reviews() {
   return (
-    <section
-      id="reviews"
+    <div
       className="reviews-section"
     >
       {/* Decorative background */}
@@ -721,6 +720,6 @@ export default function Reviews() {
         </div>
 
       </div>
-    </section>
+    </div>
   );
 }
